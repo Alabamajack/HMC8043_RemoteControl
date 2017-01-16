@@ -1,7 +1,4 @@
-#from usbtmc import usbtmc
-
-#instr =  usbtmc.Instrument("USB::0x0AAD::0x0135::INSTR")
-#print instr.ask("*IDN?")
+#!/usr/bin/env python
 
 import commands
 
@@ -17,3 +14,9 @@ my_hmc.write("VOLT ?\n")
 print my_hmc.read(10)
 
 my_hmc.close()
+
+def main():
+    pass
+
+if __name__ == "__main__":
+    main()
