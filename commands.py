@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from sympy.physics.units import voltage
 import communication
 from enum import Enum
 
@@ -23,8 +22,8 @@ class Command():
     def __str__(self):
         return self.command
 
-class Commands:    
-    def __init__(self):
+class Device:    
+    def __init__(self, device):
         self._GeneralCommands = {
                                   GeneralCommand.GetDeviceInformation : None,
                                   GeneralCommand.SetVoltage : None,
@@ -33,21 +32,23 @@ class Commands:
                                   GeneralCommand.GetCurrent : None,
                                   GeneralCommand.SelectChannel : None
                                 }
+        self.__device = device
         
-    def __SelectChannel(self,channel):    
-        self._GeneralCommands[GeneralCommand.SelectChannel] % channel
+    def __SelectChannel(self,channel): 
+        self.__device.write(self._GeneralCommands[GeneralCommand.SelectChannel] % channel)   
     
     def SetVoltage(self, channel, voltage):
         self.__SelectChannel(channel)
-        self._GeneralCommands[GeneralCommand.SetVoltage] % voltage
+        
+        self.__device.write(self._GeneralCommands[GeneralCommand.SetVoltage] % voltage)
         
     def GetVoltage(self, channel):
         self.__SelectChannel(channel)
-        self._GeneralCommands[GeneralCommand.GetVoltage]
+        self.__device.write(self._GeneralCommands[GeneralCommand.GetVoltage])
         
-class HMC804xCommands(Commands):
-    def __init__(self):
-        Commands.__init__(self)
+class HMC804xDevice(Device):
+    def __init__(self, device):
+        Device.__init__(self,device)
         
         self.__linefeed = "\n"
         self._GeneralCommands[GeneralCommand.SelectChannel] = Command("INST:NSEL %i" + self.__linefeed, None)
@@ -55,13 +56,13 @@ class HMC804xCommands(Commands):
         self._GeneralCommands[GeneralCommand.GetVoltage] = Command("VOLT?" + self.__linefeed, 10)
         
     
-class DummyCommands(Commands):
+class DummyCommands(Device):
     def __init__(self):
-        Commands.__init__(self)
+        Device.__init__(self)
         
         
 if __name__ == "__main__":
-#     mycommand = HMC804xCommands()
+#     mycommand = HMC804xDevice()
 #     mycommand.GetVoltage()
-    print dir(Commands)
+    print dir(Device)
     
