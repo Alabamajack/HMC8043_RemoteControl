@@ -45,6 +45,12 @@ class Device:
     def GetVoltage(self, channel):
         self.__SelectChannel(channel)
         self.__device.write(self._GeneralCommands[GeneralCommand.GetVoltage])
+    
+    def SetCurrent(self, channel, current):
+        pass
+    
+    def GetCurrent(self, channel):
+        pass
         
 class HMC804xDevice(Device):
     def __init__(self, device):

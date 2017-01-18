@@ -4,6 +4,7 @@ import argparse
 import commands
 import re
 import cmd
+from commands import HMC804xDevice
 
 VERSION = 0.1
 
@@ -36,8 +37,19 @@ def main():
     print args
     #now must parsing the functions and call them
     
+    conn = args['connection']
+    dev = args['device']
+    
+    if dev == 'HMC8043':
+        comm = HMC804xDevice(conn)
+    else:
+        comm = None
+    
+    
     if args['interactive']:
         InterActiveConsole().cmdloop()
+    else:
+        pass
     
 if __name__ == "__main__":
     main()
