@@ -10,6 +10,7 @@ class GeneralCommand(Enum):
     SetCurrent = 4
     GetCurrent = 5
     SelectChannel = 6
+    SetOutput = 7
     
 class Command():
     def __init__(self, command, length):
@@ -30,7 +31,8 @@ class Device:
                                   GeneralCommand.GetVoltage : None,
                                   GeneralCommand.SetCurrent : None,
                                   GeneralCommand.GetCurrent : None,
-                                  GeneralCommand.SelectChannel : None
+                                  GeneralCommand.SelectChannel : None,
+                                  GeneralCommand.SetOutput : None,
                                 }
         self.__device = device
         
@@ -60,6 +62,7 @@ class HMC804xDevice(Device):
         self._GeneralCommands[GeneralCommand.SelectChannel] = Command("INST:NSEL %i" + self.__linefeed, None)
         self._GeneralCommands[GeneralCommand.SetVoltage] = Command("VOLT %i" + self.__linefeed, None)
         self._GeneralCommands[GeneralCommand.GetVoltage] = Command("VOLT?" + self.__linefeed, 10)
+        self._GeneralCommands[GeneralCommand.SetOutput] = Command("OUTP %i" + self.__linefeed, None)
         
     
 class DummyCommands(Device):
