@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import communication
+from communication import Communication
 from enum import Enum
 
 class GeneralCommand(Enum):
@@ -34,25 +34,31 @@ class Device:
                                   GeneralCommand.SelectChannel : None,
                                   GeneralCommand.SetOutput : None,
                                 }
-        self.__device = device
+        self.__device = Communication(device)
         
     def __SelectChannel(self,channel): 
-        self.__device.write(self._GeneralCommands[GeneralCommand.SelectChannel] % channel)   
+        self.__device.Write(self._GeneralCommands[GeneralCommand.SelectChannel] % channel)   
     
     def SetVoltage(self, channel, voltage):
         self.__SelectChannel(channel)
         
-        self.__device.write(self._GeneralCommands[GeneralCommand.SetVoltage] % voltage)
+        self.__device.Write(self._GeneralCommands[GeneralCommand.SetVoltage] % voltage)
         
     def GetVoltage(self, channel):
         self.__SelectChannel(channel)
-        self.__device.write(self._GeneralCommands[GeneralCommand.GetVoltage])
-    
+        self.__device.Write(self._GeneralCommands[GeneralCommand.GetVoltage])
+        val = self.__device.Read(self._GeneralCommands[GeneralCommand.GetVoltage].length)
+        print "val=" + str(val)
+        
     def SetCurrent(self, channel, current):
         pass
     
     def GetCurrent(self, channel):
         pass
+    
+    def SetOutput(self, channel, state):
+        self.__SelectChannel(channel)
+        self.__device.Write(self._GeneralCommands[GeneralCommand.SetOutput] % state)
         
 class HMC804xDevice(Device):
     def __init__(self, device):
@@ -60,9 +66,9 @@ class HMC804xDevice(Device):
         
         self.__linefeed = "\n"
         self._GeneralCommands[GeneralCommand.SelectChannel] = Command("INST:NSEL %i" + self.__linefeed, None)
-        self._GeneralCommands[GeneralCommand.SetVoltage] = Command("VOLT %i" + self.__linefeed, None)
+        self._GeneralCommands[GeneralCommand.SetVoltage] = Command("VOLT %f" + self.__linefeed, None)
         self._GeneralCommands[GeneralCommand.GetVoltage] = Command("VOLT?" + self.__linefeed, 10)
-        self._GeneralCommands[GeneralCommand.SetOutput] = Command("OUTP %i" + self.__linefeed, None)
+        self._GeneralCommands[GeneralCommand.SetOutput] = Command("OUTP %f" + self.__linefeed, None)
         
     
 class DummyCommands(Device):
